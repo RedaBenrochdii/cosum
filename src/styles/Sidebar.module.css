@@ -1,0 +1,137 @@
+/* src/styles/Sidebar.module.css */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 220px;
+  height: 100vh;
+  z-index: 1000;
+  pointer-events: auto;
+  background: linear-gradient(145deg, rgba(248, 211, 3, 0.95), rgba(22, 51, 233, 0.85));
+  backdrop-filter: blur(8px);
+    box-shadow: 6px 0 20px rgba(0, 0, 0, 0.2);
+
+}
+
+
+
+.sidebar:hover {
+    transform: scale(1.05); /* Légère mise en valeur au survol */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); /* Augmentation de l'ombre portée */
+}
+
+.logoContainer {
+    width: 100%;
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.logo {
+    max-width: 150px;
+    height: auto;
+    transition: transform 0.3s ease-in-out;
+}
+
+.logoContainer:hover .logo {
+    transform: rotate(10deg); /* Rotation subtile du logo au survol */
+}
+
+.menu {
+    list-style: none;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.menu li {
+    margin-bottom: 1.5rem;
+    padding: 0.8rem;
+    border-radius: 10px;
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Transition pour background et transform */
+}
+
+.menu li:hover {
+    background-color: rgba(255, 255, 255, 0.2); /* Effet de survol sur l'élément */
+    transform: translateX(10px); /* Légère translation pour l'effet d'animation */
+}
+
+.menu li.active {
+    font-weight: bold;
+    color: #3b82f6;
+    background-color: rgba(59, 130, 246, 0.2); /* Arrière-plan actif avec une couleur bleue douce */
+    border-left: 4px solid #3b82f6; /* Ligne de démarcation à gauche pour l'élément actif */
+}
+
+.menu li a {
+    text-decoration: none;
+    color: inherit;
+    font-size: 1.1rem;
+    font-weight: 500;
+    display: block;
+    transition: color 0.3s ease;
+}
+
+.menu li a:hover {
+    color: #3b82f6; /* Couleur du texte au survol */
+}
+
+/* Ajout de l'effet d'ombre pour les éléments de menu au survol */
+.menu li:hover {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Animation des éléments du menu à l'ouverture */
+.menu li {
+    opacity: 0;
+    transform: translateY(-10px);
+    animation: slideIn 0.5s forwards;
+}
+
+.menu li:nth-child(1) {
+    animation-delay: 0.2s;
+}
+.menu li:nth-child(2) {
+    animation-delay: 0.4s;
+}
+.menu li:nth-child(3) {
+    animation-delay: 0.6s;
+}
+.menu li:nth-child(4) {
+    animation-delay: 0.8s;
+}
+
+@keyframes slideIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.logoutBtn {
+  position: absolute;        /* Collé en bas */
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(to right, #e53e3e, #f56565); /* Dégradé rouge */
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: calc(100% - 2rem); /* Laisse un peu de marge intérieure */
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+.logoutBtn:hover {
+  background: linear-gradient(to right, #c6acac, #e4cdcd); /* Inverser le dégradé au survol */
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+

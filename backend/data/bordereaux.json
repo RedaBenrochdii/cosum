@@ -1,0 +1,49 @@
+[
+  {
+    "id": "b-1720172819235",
+    "date": "2025-07-05T14:15:00.000Z",
+    "nombre": 3,
+    "total": 1350,
+    "dossiers": [
+      {
+        "Matricule_Employe": "EMP001",
+        "Nom_Employe": "El Amrani",
+        "Prenom_Employe": "Khadija",
+        "Nom_Malade": "El Amrani",
+        "Prenom_Malade": "Khadija",
+        "Type_Malade": "employé",
+        "Montant": "450",
+        "Montant_Rembourse": "300",
+        "Code_Assurance": "WA12345",
+        "Numero_Declaration": "DEC001",
+        "DateConsultation": "2025-06-10"
+      },
+      {
+        "Matricule_Employe": "EMP002",
+        "Nom_Employe": "Benali",
+        "Prenom_Employe": "Youssef",
+        "Nom_Malade": "Benali",
+        "Prenom_Malade": "Salma",
+        "Type_Malade": "conjoint",
+        "Montant": "500",
+        "Montant_Rembourse": "400",
+        "Code_Assurance": "WA23456",
+        "Numero_Declaration": "DEC002",
+        "DateConsultation": "2025-06-12"
+      },
+      {
+        "Matricule_Employe": "EMP003",
+        "Nom_Employe": "Karim",
+        "Prenom_Employe": "Nadia",
+        "Nom_Malade": "Karim",
+        "Prenom_Malade": "Ilyas",
+        "Type_Malade": "enfant",
+        "Montant": "400",
+        "Montant_Rembourse": "350",
+        "Code_Assurance": "WA34567",
+        "Numero_Declaration": "DEC003",
+        "DateConsultation": "2025-06-15"
+      }
+    ]
+  }
+]

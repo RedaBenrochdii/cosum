@@ -1,0 +1,29 @@
+.container {
+    padding: 2rem;
+  }
+  
+  .title {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+  }
+  
+  h2 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    color: #333;
+  }
+  .exportBtn {
+    margin: 10px 0 20px;
+    padding: 10px 18px;
+    background-color: #0070f3;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 16px;
+  }
+  .exportBtn:hover {
+    background-color: #0051a8;
+  }
+  

@@ -1,0 +1,30 @@
+{
+  "name": "cosumutuel-backend",
+  "version": "1.0.0",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon server.js",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "fs-extra": "^11.3.0",
+    "image-hash": "^5.3.2",
+    "mssql": "^11.0.1",
+    "multer": "^1.4.5-lts.1",
+    "pkg": "^5.8.1",
+    "sharp": "^0.34.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  },
+  "bin": "server.js",
+"pkg": {
+  "scripts": ["server.js"],
+  "targets": ["node18-win-x64"],
+  "outputPath": "dist"
+}
+
+}
