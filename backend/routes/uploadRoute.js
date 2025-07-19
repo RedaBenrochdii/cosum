@@ -1,15 +1,15 @@
-import express from 'express';
-import fs from 'fs-extra';
-import path from 'path';
-import { fileURLToPath } from 'url';
+const express = require('express');
+const fs = require('fs-extra');
+const path = require('path');
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 const router = express.Router();
 
-const HISTORY_FILE = path.join(__dirname, '..', 'history.json');
+// 📁 Chemin absolu pour history.json
+const isPkg = typeof process.pkg !== 'undefined';
+const baseDir = isPkg ? path.dirname(process.execPath) : __dirname;
+const HISTORY_FILE = path.join(baseDir, 'history.json');
 
-// Ajout d’un document dans l’historique
+// ✅ Ajout d’un document dans l’historique
 router.post('/api/history/add', async (req, res) => {
   try {
     const { filename, data } = req.body;
@@ -31,4 +31,4 @@ router.post('/api/history/add', async (req, res) => {
   }
 });
 
-export default router;
+module.exports = router;

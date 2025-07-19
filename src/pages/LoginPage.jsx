@@ -7,21 +7,26 @@ import styles from '../styles/Login.module.css';
 export default function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false); // ⏳
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true); // ⏳ Start loading
+
     try {
       const res = await api.post('/login', { username, password });
       if (res.data.success) {
         localStorage.setItem('loggedIn', 'true');
-        navigate('/home');
+        navigate('/');
       } else {
         alert('Identifiants invalides');
       }
     } catch (error) {
       alert("Erreur lors de l'authentification");
       console.error(error);
+    } finally {
+      setLoading(false); // ✅ End loading
     }
   };
 
@@ -37,6 +42,7 @@ export default function LoginPage() {
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           required
+          disabled={loading}
         />
 
         <input
@@ -45,9 +51,13 @@ export default function LoginPage() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
+          disabled={loading}
         />
 
-        <button type="submit">Se connecter</button>
+        <button type="submit" disabled={loading}>
+          {loading ? 'Connexion...' : 'Se connecter'}
+        </button>
+
         <p className={styles.footer}>© COSUMAR 2025 – Tous droits réservés</p>
       </form>
     </div>

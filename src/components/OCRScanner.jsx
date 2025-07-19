@@ -116,7 +116,7 @@ export default function OCRScanner({ onAutoFill }) {
             || ocrMethod === 'tesseract' && !workerRef.current}
         />
         <span className="ocr-button">
-          {status.includes('...') ? 'Traitement en cours...' : 'Choisir un fichier'}
+          {status.includes('...') ? 'Traitement en cours...' : ''}
         </span>
       </label>
 

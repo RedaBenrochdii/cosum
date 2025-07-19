@@ -35,7 +35,7 @@ const SmartUploader = ({ onAutoFill }) => {
     <div className="p-4 border rounded bg-gray-50">
       <input type="file" onChange={handleFileChange} className="mb-2" />
       <button onClick={handleUpload} className="bg-blue-500 text-white px-4 py-2 rounded">
-        Comparer et remplir
+        /*Comparer et remplir/*
       </button>
       <div className="mt-2 text-sm">{status}</div>
       {confidence !== null && (

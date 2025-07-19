@@ -1,4 +1,3 @@
-// src/components/Sidebar.jsx
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import styles from '../styles/Sidebar.module.css';
@@ -33,28 +32,22 @@ const Sidebar = () => {
             Formulaire
           </NavLink>
         </li>
-         <li>
-    <NavLink to="/reclamation" className={({ isActive }) => (isActive ? styles.active : undefined)}>
-      Production
-    </NavLink>
-  </li>
         <li>
-    <NavLink to="/bordereau" className={({ isActive }) => (isActive ? styles.active : undefined)}>
-      Bordereau
-    </NavLink>
-  </li>
+          <NavLink to="/reclamation" className={({ isActive }) => (isActive ? styles.active : undefined)}>
+            Production
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to="/bordereau" className={({ isActive }) => (isActive ? styles.active : undefined)}>
+            Bordereau
+          </NavLink>
+        </li>
+        <li>
+          <button onClick={handleLogout} className={styles.logoutLink}>
+            Se déconnecter
+          </button>
+        </li>
       </ul>
-
-      
-      <button className={styles.logoutBtn} 
-  onClick={() => {
-    localStorage.removeItem('loggedIn');
-    window.location.href = '/login';
-  }}
->
-  Se déconnecter
-</button>
-
     </nav>
   );
 };

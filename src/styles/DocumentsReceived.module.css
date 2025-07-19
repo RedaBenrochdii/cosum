@@ -1,6 +1,6 @@
 .pageContainer {
   padding: 2rem;
-  background-color: #f3f4f6;
+  background-color: #f9fafb;
   font-family: "Segoe UI", sans-serif;
   min-height: 100vh;
 }
@@ -14,59 +14,68 @@
   margin-bottom: 2rem;
 }
 
+.titleBlock {
+  display: flex;
+  flex-direction: column;
+}
+
 .title {
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: #005eb8;
+  font-size: 2rem;
+  font-weight: 800;
+  color: #004b8d;
 }
 
-.searchInput {
-  flex: 1;
-  max-width: 320px;
-  padding: 0.6rem 1rem;
-  font-size: 1rem;
+.subtitle {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.controls {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.input,
+.select {
+  padding: 0.65rem 1rem;
   border: 1px solid #d1d5db;
-  border-radius: 8px;
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+  background-color: #fff;
+  transition: all 0.2s;
 }
 
-.monthGroup {
-  margin-top: 2rem;
-}
-
-.monthTitle {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #005eb8;
-  margin-bottom: 1rem;
+.input:focus,
+.select:focus {
+  outline: none;
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.3);
 }
 
 .grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
 }
 
 .card {
   background-color: #ffffff;
-  border-radius: 10px;
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  max-width: 500px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
   overflow: hidden;
-  transition: 0.3s ease;
+  transition: transform 0.2s ease;
+  display: flex;
+  flex-direction: column;
 }
 
 .card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 94, 184, 0.1);
+  transform: translateY(-3px);
 }
 
-.cardImageWrapper {
-  flex-shrink: 0;
-  width: 120px;
-  height: 100px;
+.imageWrapper {
+  width: 100%;
+  height: 140px;
   overflow: hidden;
 }
 
@@ -77,85 +86,42 @@
 }
 
 .cardContent {
-  padding: 0.75rem 1rem;
+  padding: 1rem;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  flex: 1;
+  gap: 0.4rem;
 }
 
-.commentaire {
+.filename {
+  font-weight: 600;
   font-size: 0.95rem;
-  color: #1a202c;
-  font-weight: 500;
-  margin-bottom: 0.4rem;
+  color: #1f2937;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.date {
-  font-size: 0.8rem;
-  color: #718096;
+.meta {
+  font-size: 0.85rem;
+  color: #4b5563;
 }
 
-.downloadBtn {
-  align-self: flex-start;
+.download {
   margin-top: 0.5rem;
   padding: 0.4rem 0.75rem;
-  background-color: #005eb8;
-  color: #fff;
+  background: linear-gradient(to right, #005eb8, #007fff);
+  color: white;
   font-size: 0.85rem;
   border-radius: 6px;
-  text-decoration: none;
-  transition: background-color 0.2s ease;
-}
-
-.downloadBtn:hover {
-  background-color: #004799;
-}
-
-.emptyContainer {
   text-align: center;
-  margin-top: 4rem;
+  text-decoration: none;
+  width: 100%;
+  display: inline-block;
 }
 
-.emptyText {
-  font-size: 1.1rem;
-  color: #6b7280;
-}
-.autoFillBtn {
-  margin-left: 8px;
-  padding: 6px 12px;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.autoFillBtn:hover {
-  background-color: #45a049;
-}
-
-.buttonGroup {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 10px;
-}
-.fillBtn {
-  background-color: #22c55e;
-  color: white;
-  border: none;
-  padding: 6px 10px;
-  margin-top: 6px;
-  border-radius: 5px;
-  cursor: pointer;
-}
-.saveBtn {
-  background-color: #0ea5e9;
-  color: white;
-  border: none;
-  padding: 6px 10px;
-  margin-top: 6px;
-  margin-left: 5px;
-  border-radius: 5px;
-  cursor: pointer;
+.empty {
+  text-align: center;
+  color: #9ca3af;
+  font-size: 1rem;
+  margin-top: 2rem;
 }

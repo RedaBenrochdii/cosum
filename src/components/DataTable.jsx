@@ -2,6 +2,7 @@ import React from 'react';
 import styles from '../styles/FormPage.module.css';
 
 export function DataTable({ data, onDelete, onDeleteAll, onEdit }) {
+  
   return (
     <div className={styles.scrollContainer}>
       <table className={styles.table}>
@@ -30,7 +31,7 @@ export function DataTable({ data, onDelete, onDeleteAll, onEdit }) {
               <td>{item.Nom_Employe}</td>
               <td>{item.Prenom_Employe}</td>
               <td>{item.Nom_Malade}</td>
-              <td>{item.Prenom_Malade}</td>
+<td>{item.Prenom_Malade || <em style={{ color: 'gray' }}>—</em>}</td>
               <td>{item.Type_Malade}</td>
               <td>{item.Montant}</td>
               <td>{item.Montant_Rembourse}</td>

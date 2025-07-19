@@ -7,7 +7,6 @@ import { ConsumptionForm } from '../components/ConsumptionForm';
 import { DataTable } from '../components/DataTable';
 import OCRScanner from '../components/OCRScanner';
 import styles from '../styles/FormPage.module.css';
-import SmartUploader from '../components/SmartUploader';
 
 const INITIAL_FORM_STATE = {
   DateConsultation: '',
@@ -50,18 +49,38 @@ export default function FormPage() {
       .catch(err => console.error('Erreur chargement employés :', err));
   }, []);
 
-  const handleAutoFill = useCallback(fields => {
-    setFormData(prev => ({
-      ...prev,
-      ...fields,
-      Montant: fields.Montant?.replace(/\s+/g, '') || '',
-      DateConsultation: fields.DateConsultation || new Date().toISOString().split('T')[0]
-    }));
-  }, []);
-
   const updateFormData = useCallback((key, value) => {
     setFormData(prev => ({ ...prev, [key]: value }));
   }, []);
+
+  const checkAgeLimit = useCallback((emp) => {
+    const today = new Date();
+    const birthDate = new Date(emp.DateNaissance);
+    const age = today.getFullYear() - birthDate.getFullYear();
+
+    if (age >= 60) {
+      setAlertDate(`❌ Employé trop âgé : ${age} ans (limite = 60 ans)`);
+      setBlockSubmit(true);
+      return;
+    }
+
+    if (formData.Ayant_Droit === 'enfant') {
+      const enfant = emp.Famille?.find(f =>
+        f.type === 'enfant' && f.nom?.toLowerCase() === formData.Nom_Malade.toLowerCase()
+      );
+      if (enfant && enfant.DateNaissance) {
+        const enfantAge = today.getFullYear() - new Date(enfant.DateNaissance).getFullYear();
+        if (enfantAge >= 25) {
+          setAlertDate(`⚠️ Enfant trop âgé : ${enfantAge} ans (limite = 25 ans)`);
+          setBlockSubmit(true);
+          return;
+        }
+      }
+    }
+
+    setAlertDate('');
+    setBlockSubmit(false);
+  }, [formData.Ayant_Droit, formData.Nom_Malade]);
 
   const autoFillFromEmploye = useCallback((field, value) => {
     const emp = employesData.find(x => x[field]?.toLowerCase() === value.toLowerCase());
@@ -71,8 +90,9 @@ export default function FormPage() {
         ...emp,
         DateConsultation: emp.DateConsultation?.split('T')[0] || prev.DateConsultation
       }));
+      checkAgeLimit(emp);
     }
-  }, [employesData]);
+  }, [employesData, checkAgeLimit]);
 
   const handleMatriculeChange = useCallback(e => {
     const value = e.target.value;
@@ -90,12 +110,10 @@ export default function FormPage() {
     const { name, value } = e.target;
     updateFormData(name, value);
 
-    // 🚨 Vérifie la date de consultation
     if (name === 'DateConsultation') {
       const inputDate = new Date(value);
       const now = new Date();
-      const diff = (now - inputDate) / (1000 * 60 * 60 * 24); // en jours
-
+      const diff = (now - inputDate) / (1000 * 60 * 60 * 24);
       if (diff > 90) {
         setAlertDate('⚠️ La date dépasse 3 mois.');
         setBlockSubmit(true);
@@ -106,15 +124,34 @@ export default function FormPage() {
     }
   }, [updateFormData]);
 
-  const handleSubmit = useCallback(e => {
-    e.preventDefault();
-    if (blockSubmit) {
-      alert('❌ Impossible d’enregistrer : la date dépasse 3 mois.');
-      return;
-    }
-    setFormList(prev => [...prev, formData]);
-    setFormData(INITIAL_FORM_STATE);
-  }, [formData, setFormList, blockSubmit]);
+  const handleAutoFill = useCallback(fields => {
+    setFormData(prev => ({
+      ...prev,
+      ...fields,
+      Montant: fields.Montant?.replace(/\s+/g, '') || '',
+      DateConsultation: fields.DateConsultation || new Date().toISOString().split('T')[0]
+    }));
+  }, []);
+
+  const handleSubmit = useCallback((e, currentFormData) => {
+  e.preventDefault();
+
+  if (blockSubmit) {
+    alert(alertDate || '❌ Formulaire bloqué.');
+    return;
+  }
+
+  const completeFormData = {
+    ...currentFormData,
+    Prenom_Malade: currentFormData.Prenom_Malade?.trim() || '—'
+  };
+
+  console.log("📝 Données soumises :", completeFormData);
+  setFormList(prev => [...prev, completeFormData]);
+  setFormData(INITIAL_FORM_STATE);
+}, [setFormList, blockSubmit, alertDate]);
+
+
 
   const handleDelete = useCallback(idx => {
     setFormList(prev => prev.filter((_, i) => i !== idx));
@@ -183,7 +220,7 @@ export default function FormPage() {
         showDateWarning={!!alertDate}
       />
 
-      {/* Notification Date */}
+      {/* 🔔 Alertes Blocage / Avertissement */}
       {alertDate && (
         <div style={{
           marginTop: '10px',

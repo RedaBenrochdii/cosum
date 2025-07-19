@@ -1,30 +1,23 @@
-
 // 🔐 .env
-import dotenv from 'dotenv';
-dotenv.config();
+require('dotenv').config();
 if (!process.env.GEMINI_API_KEY) {
   console.error("❌ Clé Gemini manquante dans .env");
   process.exit(1);
 }
 
 // 🌐 Dépendances
-import express from 'express';
-import cors from 'cors';
-import fs from 'fs-extra';
-import path from 'path';
-import multer from 'multer';
-import { fileURLToPath } from 'url';
-import { GoogleGenerativeAI } from '@google/generative-ai';
-import * as XLSX from 'xlsx';
-import uploadRoute from './routes/uploadRoute.js';
+const express = require('express');
+const cors = require('cors');
+const fs = require('fs-extra');
+const path = require('path');
+const multer = require('multer');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
+const XLSX = require('xlsx');
+const uploadRoute = require('./routes/uploadRoute');
 
 // 📁 Chemins
-import { dirname } from 'path';
-
 const isPkg = typeof process.pkg !== 'undefined';
-const __filename = isPkg ? process.execPath : fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
+const baseDir = isPkg ? path.dirname(process.execPath) : __dirname;
 
 // ✅ Initialisation serveur
 const app = express();
@@ -207,12 +200,18 @@ app.post('/api/export-bordereau', async (req, res) => {
     XLSX.utils.book_append_sheet(wb, ws, "Bordereau");
     XLSX.writeFile(wb, filepath);
 
+    const nbDossiers = dossiers.length;
+    const total = dossiers.reduce((sum, d) => sum + parseFloat(d.Montant || 0), 0).toFixed(2);
+    const rembourse = dossiers.reduce((sum, d) => sum + parseFloat(d.Montant_Rembourse || 0), 0).toFixed(2);
+
     const historique = fs.existsSync(bordereauxHistoryFile) ? fs.readJsonSync(bordereauxHistoryFile) : [];
     historique.unshift({
+      id: `BORD-${historique.length + 1}`,
       filename,
       date: now.toISOString(),
-      nbDossiers: dossiers.length,
-      total: dossiers.reduce((sum, d) => sum + parseFloat(d.Montant || 0), 0)
+      nbDossiers,
+      total,
+      rembourse
     });
     fs.writeJsonSync(bordereauxHistoryFile, historique, { spaces: 2 });
 
@@ -222,6 +221,7 @@ app.post('/api/export-bordereau', async (req, res) => {
     res.status(500).json({ error: "Erreur export bordereau" });
   }
 });
+
 
 // 📜 Historique
 app.get('/api/bordereaux', (_, res) => {

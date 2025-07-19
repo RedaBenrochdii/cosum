@@ -276,3 +276,6 @@ input[type="radio"] {
     transform: scale(1.02);
   }
 }
+.hide-tab-label {
+  display: none !important;
+}

@@ -1,6 +1,6 @@
+// 🔽 Même imports qu'avant...
 import React, { useEffect, useState } from 'react';
 import styles from '../styles/ConsumptionForm.module.css';
-import SmartUploader from './SmartUploader';
 import axios from 'axios';
 
 export function ConsumptionForm({
@@ -10,11 +10,15 @@ export function ConsumptionForm({
   onChange,
   onSubmit,
   setFormData,
+  setAlertDate,
+  setBlockSubmit,
   dependents = []
 }) {
   const [matriculeTimeout, setMatriculeTimeout] = useState(null);
   const [childrenOptions, setChildrenOptions] = useState([]);
+  const [conjointOption, setConjointOption] = useState(null);
 
+  // ⏳ OCR autofill
   const handleAutoFill = (data) => {
     setFormData((prev) => ({
       ...prev,
@@ -24,6 +28,7 @@ export function ConsumptionForm({
     }));
   };
 
+  // 🔍 Auto-remplir depuis matricule
   const handleMatriculeBlur = () => {
     const matricule = formData.Matricule_Employe?.trim();
     if (!matricule) return;
@@ -51,202 +56,230 @@ export function ConsumptionForm({
     return () => clearTimeout(matriculeTimeout);
   }, [formData.Matricule_Employe]);
 
+  // 🔁 Si Ayant_Droit change
   useEffect(() => {
-    const fetchAyantDroitInfo = async () => {
-      const matricule = formData.Matricule_Employe?.trim();
-      const droit = formData.Ayant_Droit?.toLowerCase();
+    const matricule = formData.Matricule_Employe?.trim();
+    const droit = formData.Ayant_Droit?.toLowerCase();
 
-      if (!matricule || !['conjoint', 'enfant'].includes(droit)) return;
+    if (!matricule || !droit) return;
 
+    const updateFromAyantDroit = async () => {
       try {
-        if (droit === 'conjoint') {
-  const res = await axios.get(`http://localhost:4000/api/employes/${matricule}/conjoint`);
-  const conjoint = res.data;
-  if (conjoint) {
-    setFormData(prev => ({
-      ...prev,
-      Nom_Malade: conjoint.Nom_Conjoint || '',
-      Prenom_Malade: conjoint.Prenom_Conjoint || ''
-    }));
-  }
-}
- else if (droit === 'enfant') {
+        if (droit === 'employe') {
+          setFormData(prev => ({
+            ...prev,
+            Nom_Malade: prev.Nom_Employe,
+            Prenom_Malade: prev.Prenom_Employe
+          }));
+          setAlertDate('');
+          setBlockSubmit(false);
+        } else if (droit === 'conjoint') {
+          const res = await axios.get(`http://localhost:4000/api/employes/${matricule}/conjoint`);
+          const conjoint = res.data;
+          if (conjoint) {
+            setConjointOption(conjoint);
+            setFormData(prev => ({
+              ...prev,
+              Nom_Malade: conjoint.Nom_Conjoint || '',
+              Prenom_Malade: conjoint.Prenom_Conjoint || ''
+            }));
+          }
+          setAlertDate('');
+          setBlockSubmit(false);
+        } else if (droit === 'enfant') {
           const res = await axios.get(`http://localhost:4000/api/employes/${matricule}/enfants`);
           const enfants = res.data;
           setChildrenOptions(enfants);
 
           if (enfants.length === 1) {
+            const enfant = enfants[0];
+            const age = new Date().getFullYear() - new Date(enfant.DateNaissance).getFullYear();
             setFormData(prev => ({
               ...prev,
               Nom_Malade: prev.Nom_Employe,
-              Prenom_Malade: enfants[0].Prenom_Enfant || ''
+              Prenom_Malade: enfant.Prenom_Enfant
             }));
+            if (age >= 25) {
+              setAlertDate(`⚠️ Enfant a ${age} ans (limite 25 ans)`);
+              setBlockSubmit(true);
+            } else {
+              setAlertDate('');
+              setBlockSubmit(false);
+            }
           } else {
             setFormData(prev => ({
               ...prev,
               Nom_Malade: prev.Nom_Employe,
               Prenom_Malade: ''
             }));
+            setAlertDate('');
+            setBlockSubmit(false);
           }
         }
       } catch (err) {
-        console.error("Erreur remplissage Ayant Droit :", err.message);
+        console.error("Erreur Ayant Droit :", err.message);
+        setAlertDate('');
+        setBlockSubmit(false);
       }
     };
 
-    fetchAyantDroitInfo();
-  }, [formData.Ayant_Droit, formData.Matricule_Employe]);
-
-  const handleSelectChild = (e) => {
-    const selected = childrenOptions.find(child => child.Prenom_Enfant === e.target.value);
-    if (selected) {
-      setFormData(prev => ({
-        ...prev,
-        Nom_Malade: prev.Nom_Employe,
-        Prenom_Malade: selected.Prenom_Enfant
-      }));
-    }
-  };
+    updateFromAyantDroit();
+  }, [formData.Ayant_Droit, formData.Matricule_Employe, formData.Nom_Employe, formData.Prenom_Employe]);
 
   return (
     <>
-      <SmartUploader onAutoFill={handleAutoFill} />
 
-      <form onSubmit={onSubmit} className={styles.form}>
-        <input
-          name="Matricule_Employe"
-          value={formData.Matricule_Employe}
-          onChange={onMatriculeChange}
-          placeholder="Matricule Employé"
-          required
-          className={styles.input}
-        />
+        <form onSubmit={(e) => onSubmit(e, formData)} className={styles.form}>
+        <input name="Matricule_Employe" value={formData.Matricule_Employe} onChange={onMatriculeChange} placeholder="Matricule Employé" required className={styles.input} />
 
-        <input
-          list="noms-employes"
-          name="Nom_Employe"
-          value={formData.Nom_Employe}
-          onChange={onNomChange}
-          placeholder="Nom Employé"
-          required
-          className={styles.input}
-        />
+        <input list="noms-employes" name="Nom_Employe" value={formData.Nom_Employe} onChange={onNomChange} placeholder="Nom Employé" required className={styles.input} />
         <datalist id="noms-employes">
-          {dependents.map((emp, i) => (
-            <option key={i} value={emp.Nom_Employe} />
-          ))}
+          {dependents.map((emp, i) => <option key={i} value={emp.Nom_Employe} />)}
         </datalist>
 
-        <input
-          name="Prenom_Employe"
-          value={formData.Prenom_Employe}
-          onChange={onChange}
-          placeholder="Prénom Employé"
-          required
-          className={styles.input}
-        />
+        <input name="Prenom_Employe" value={formData.Prenom_Employe} onChange={onChange} placeholder="Prénom Employé" required className={styles.input} />
 
-        <input
-          type="date"
-          name="DateConsultation"
-          value={formData.DateConsultation}
-          onChange={onChange}
-          required
-          className={styles.input}
-        />
+        <input type="date" name="DateConsultation" value={formData.DateConsultation} onChange={onChange} required className={styles.input} />
 
-        <input
-          name="Nom_Malade"
-          value={formData.Nom_Malade}
-          onChange={onChange}
-          placeholder="Nom Malade"
-          className={styles.input}
-        />
+        <input name="Nom_Malade" value={formData.Nom_Malade} onChange={onChange} placeholder="Nom Malade" className={styles.input} />
+{/* 🔁 Prénom Malade dynamique selon Ayant_Droit */}
+{formData.Ayant_Droit === 'enfant' && childrenOptions.length > 0 ? (
+  <select
+  name="Prenom_Malade"
+  onChange={(e) => {
+    const selected = JSON.parse(e.target.value);
+    const birthDate = new Date(selected.DateNaissance);
+    const today = new Date();
+    const age = today.getFullYear() - birthDate.getFullYear();
+    const isBirthdayPassed =
+      today.getMonth() > birthDate.getMonth() ||
+      (today.getMonth() === birthDate.getMonth() && today.getDate() >= birthDate.getDate());
+    const realAge = isBirthdayPassed ? age : age - 1;
 
-        {childrenOptions.length > 1 ? (
-          <select onChange={handleSelectChild} className={styles.input}>
-            <option value="">-- Choisir l’enfant --</option>
-            {childrenOptions.map((child, i) => (
-              <option key={i} value={child.Prenom_Enfant}>
-                {child.Prenom_Enfant}
-              </option>
-            ))}
-          </select>
-        ) : (
-          <input
-            name="Prenom_Malade"
-            value={formData.Prenom_Malade}
-            onChange={onChange}
-            placeholder="Prénom Malade"
-            className={styles.input}
-          />
-        )}
+    // 🔄 Remplir les champs
+    const updatedForm = {
+      ...formData,
+      Prenom_Malade: selected.Prenom_Enfant,
+      Nom_Malade: formData.Nom_Employe,
+    };
+    setFormData(updatedForm);
 
-        <select
-          name="Type_Malade"
-          value={formData.Type_Malade}
-          onChange={onChange}
-          required
-          className={styles.input}
-        >
+    // 📣 Déclencher manuellement les événements de saisie (si nécessaire)
+    const syntheticPrenomEvent = {
+      target: {
+        name: 'Prenom_Malade',
+        value: selected.Prenom_Enfant,
+      },
+    };
+    const syntheticNomEvent = {
+      target: {
+        name: 'Nom_Malade',
+        value: formData.Nom_Employe,
+      },
+    };
+
+    // ⚠️ Appeler la fonction onChange passée en prop
+    onChange(syntheticPrenomEvent);
+    onChange(syntheticNomEvent);
+
+    // 🚨 Contrôle de l'âge
+    if (realAge >= 25) {
+      setAlertDate(`⚠️ L'enfant a ${realAge} ans. Limite autorisée : 25 ans.`);
+      setBlockSubmit(true);
+    } else {
+      setAlertDate('');
+      setBlockSubmit(false);
+    }
+  }}
+  className={styles.input}
+  required
+>
+  <option value="">-- Choisir l’enfant --</option>
+  {childrenOptions.map((child, i) => (
+    <option key={i} value={JSON.stringify(child)}>
+      {child.Prenom_Enfant}
+    </option>
+  ))}
+</select>
+) :
+
+formData.Ayant_Droit === 'conjoint' && conjointOption ? (
+  <select
+    name="Prenom_Malade"
+    onChange={(e) => {
+      const selected = JSON.parse(e.target.value);
+      const birthDate = new Date(selected.DateNaissance);
+      const today = new Date();
+      const age = today.getFullYear() - birthDate.getFullYear();
+      const isBirthdayPassed =
+        today.getMonth() > birthDate.getMonth() ||
+        (today.getMonth() === birthDate.getMonth() && today.getDate() >= birthDate.getDate());
+      const realAge = isBirthdayPassed ? age : age - 1;
+
+      setFormData(prev => ({
+        ...prev,
+        Prenom_Malade: selected.Prenom_Conjoint,
+        Nom_Malade: selected.Nom_Conjoint,
+      }));
+
+      if (realAge >= 60) {
+        setAlertDate(`⚠️ Le conjoint a ${realAge} ans. Limite autorisée : 60 ans.`);
+        setBlockSubmit(true);
+      } else {
+        setAlertDate('');
+        setBlockSubmit(false);
+      }
+    }}
+    className={styles.input}
+    required
+  >
+    <option value="">-- Choisir le conjoint --</option>
+    {Array.isArray(conjointOption) ? (
+      conjointOption.map((conj, i) => (
+        <option key={i} value={JSON.stringify(conj)}>
+          {conj.Prenom_Conjoint}
+        </option>
+      ))
+    ) : (
+      <option value={JSON.stringify(conjointOption)}>
+        {conjointOption.Prenom_Conjoint}
+      </option>
+    )}
+  </select>
+) : (
+  <input
+    name="Prenom_Malade"
+    value={formData.Prenom_Malade}
+    onChange={onChange}
+    placeholder="Prénom Malade"
+    className={styles.input}
+    required
+  />
+)}
+
+
+      
+
+        <select name="Type_Malade" value={formData.Type_Malade} onChange={onChange} required className={styles.input}>
           <option value="">-- Type consultation --</option>
           <option value="médicale">Médicale</option>
           <option value="optique">Optique</option>
           <option value="dentaire">Dentaire</option>
         </select>
 
-        <input
-          type="number"
-          name="Montant"
-          value={formData.Montant}
-          onChange={onChange}
-          placeholder="Montant"
-          className={styles.input}
-        />
+        <input type="number" name="Montant" value={formData.Montant} onChange={onChange} placeholder="Montant" className={styles.input} />
+        <input type="number" name="Montant_Rembourse" value={formData.Montant_Rembourse} onChange={onChange} placeholder="Montant Remboursé" className={styles.input} />
+        <input name="Code_Assurance" value={formData.Code_Assurance} onChange={onChange} placeholder="Code Assurance" className={styles.input} />
+        <input type="text" name="Numero_Declaration" value={formData.Numero_Declaration} onChange={onChange} placeholder="Numéro de déclaration" required className={styles.input} />
 
-        <input
-          type="number"
-          name="Montant_Rembourse"
-          value={formData.Montant_Rembourse}
-          onChange={onChange}
-          placeholder="Montant Remboursé"
-          className={styles.input}
-        />
-
-        <input
-          name="Code_Assurance"
-          value={formData.Code_Assurance}
-          onChange={onChange}
-          placeholder="Code Assurance"
-          className={styles.input}
-        />
-
-        <input
-          type="text"
-          name="Numero_Declaration"
-          value={formData.Numero_Declaration}
-          onChange={onChange}
-          placeholder="Numéro de déclaration"
-          required
-          className={styles.input}
-        />
-
-        <select
-          name="Ayant_Droit"
-          value={formData.Ayant_Droit}
-          onChange={onChange}
-          required
-          className={styles.input}
-        >
+        <select name="Ayant_Droit" value={formData.Ayant_Droit} onChange={onChange} required className={styles.input}>
           <option value="">-- Ayant droit --</option>
           <option value="employe">Employé</option>
           <option value="conjoint">Conjoint</option>
           <option value="enfant">Enfant</option>
         </select>
 
-        <button type="submit" className={styles.button}>
-          Ajouter
-        </button>
+        <button type="submit" className={styles.button}>Ajouter</button>
       </form>
     </>
   );
