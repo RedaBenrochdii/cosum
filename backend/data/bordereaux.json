@@ -1,99 +1,18 @@
 [
   {
-    "id": "BORD-8",
-    "filename": "bordereau_2025-07-16-20-55-00.xlsx",
-    "date": "2025-07-16T20:55:00.468Z",
+    "id": "BORD-2",
+    "filename": "bordereau_2025-07-22-16-57-09.xlsx",
+    "date": "2025-07-22T16:57:09.787Z",
     "nbDossiers": 2,
-    "total": "400.00",
+    "total": "1200.00",
+    "rembourse": "180.00"
+  },
+  {
+    "id": "BORD-2",
+    "filename": "bordereau_2025-07-22-16-22-58.xlsx",
+    "date": "2025-07-22T16:22:58.693Z",
+    "nbDossiers": 2,
+    "total": "3200.00",
     "rembourse": "360.00"
-  },
-  {
-    "id": "BORD-7",
-    "filename": "bordereau_2025-07-16-16-00-11.xlsx",
-    "date": "2025-07-16T16:00:11.758Z",
-    "nbDossiers": 4,
-    "total": "10000.00",
-    "rembourse": "470.80"
-  },
-  {
-    "id": "BORD-6",
-    "filename": "bordereau_2025-07-16-15-55-01.xlsx",
-    "date": "2025-07-16T15:55:01.300Z",
-    "nbDossiers": 5,
-    "total": "4867.28",
-    "rembourse": "650.80"
-  },
-  {
-    "id": "BORD-5",
-    "filename": "bordereau_2025-07-16-14-46-02.xlsx",
-    "date": "2025-07-16T14:46:02.590Z",
-    "nbDossiers": 1,
-    "total": "667.28",
-    "rembourse": "1.00"
-  },
-  {
-    "filename": "bordereau_2025-07-15-15-40-55.xlsx",
-    "date": "2025-07-15T15:40:55.190Z",
-    "nbDossiers": 17,
-    "total": 10073.08
-  },
-  {
-    "filename": "bordereau_2025-07-09-20-39-32.xlsx",
-    "date": "2025-07-09T20:39:32.315Z",
-    "nbDossiers": 1,
-    "total": 500
-  },
-  {
-    "filename": "bordereau_2025-07-09-13-25-23.xlsx",
-    "date": "2025-07-09T13:25:23.943Z",
-    "nbDossiers": 3,
-    "total": 12234
-  },
-  {
-    "id": "b-1720172819235",
-    "date": "2025-07-05T14:15:00.000Z",
-    "nombre": 3,
-    "total": 1350,
-    "dossiers": [
-      {
-        "Matricule_Employe": "EMP001",
-        "Nom_Employe": "El Amrani",
-        "Prenom_Employe": "Khadija",
-        "Nom_Malade": "El Amrani",
-        "Prenom_Malade": "Khadija",
-        "Type_Malade": "employé",
-        "Montant": "450",
-        "Montant_Rembourse": "300",
-        "Code_Assurance": "WA12345",
-        "Numero_Declaration": "DEC001",
-        "DateConsultation": "2025-06-10"
-      },
-      {
-        "Matricule_Employe": "EMP002",
-        "Nom_Employe": "Benali",
-        "Prenom_Employe": "Youssef",
-        "Nom_Malade": "Benali",
-        "Prenom_Malade": "Salma",
-        "Type_Malade": "conjoint",
-        "Montant": "500",
-        "Montant_Rembourse": "400",
-        "Code_Assurance": "WA23456",
-        "Numero_Declaration": "DEC002",
-        "DateConsultation": "2025-06-12"
-      },
-      {
-        "Matricule_Employe": "EMP003",
-        "Nom_Employe": "Karim",
-        "Prenom_Employe": "Nadia",
-        "Nom_Malade": "Karim",
-        "Prenom_Malade": "Ilyas",
-        "Type_Malade": "enfant",
-        "Montant": "400",
-        "Montant_Rembourse": "350",
-        "Code_Assurance": "WA34567",
-        "Numero_Declaration": "DEC003",
-        "DateConsultation": "2025-06-15"
-      }
-    ]
   }
 ]

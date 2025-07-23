@@ -124,7 +124,7 @@ app.get('/api/employes/:matricule/enfants', (req, res) => {
     const data = fs.readJsonSync(EMPLOYES_FILE);
     const emp = data.find(e => e.Matricule_Employe === matricule);
     const enfants = emp?.Famille?.filter(f => f.type === 'enfant') || [];
-    res.json(enfants.map(e => ({ Nom_Enfant: emp.Nom_Employe, Prenom_Enfant: e.prenom })));
+    res.json(enfants.map(e => ({ Nom_Enfant: emp.Nom_Employe, Prenom_Enfant: e.prenom, DateNaissance: e.DateNaissance })));
   } catch {
     res.status(500).json({ error: 'Erreur serveur' });
   }
@@ -184,7 +184,7 @@ app.post('/api/ocr/gemini', upload.single('image'), async (req, res) => {
   }
 });
 
-// 📤 Export Excel
+// 📤 Export Excel (nouveau bordereau)
 app.post('/api/export-bordereau', async (req, res) => {
   try {
     const dossiers = req.body;
@@ -204,7 +204,10 @@ app.post('/api/export-bordereau', async (req, res) => {
     const total = dossiers.reduce((sum, d) => sum + parseFloat(d.Montant || 0), 0).toFixed(2);
     const rembourse = dossiers.reduce((sum, d) => sum + parseFloat(d.Montant_Rembourse || 0), 0).toFixed(2);
 
-    const historique = fs.existsSync(bordereauxHistoryFile) ? fs.readJsonSync(bordereauxHistoryFile) : [];
+    const historique = fs.existsSync(bordereauxHistoryFile)
+      ? fs.readJsonSync(bordereauxHistoryFile)
+      : [];
+
     historique.unshift({
       id: `BORD-${historique.length + 1}`,
       filename,
@@ -222,14 +225,38 @@ app.post('/api/export-bordereau', async (req, res) => {
   }
 });
 
-
-// 📜 Historique
+// 📜 Historique unifié des bordereaux
 app.get('/api/bordereaux', (_, res) => {
   try {
-    const data = fs.readJsonSync(bordereauxHistoryFile);
+    const raw = fs.readJsonSync(bordereauxHistoryFile);
+    const data = raw.map(item => {
+      // nbDossiers : nouveau champ ou ancien "nombre" ou longueur de "dossiers"
+      const nb = item.nbDossiers ?? item.nombre ?? (item.dossiers?.length ?? 0);
+      // total : on garde tel quel
+      const total = parseFloat(item.total || 0).toFixed(2);
+      // rembourse : nouveau champ ou calcul depuis "dossiers"
+      const rembourse = item.rembourse
+        ? parseFloat(item.rembourse).toFixed(2)
+        : (
+            item.dossiers?.reduce(
+              (sum, d) => sum + parseFloat(d.Montant_Rembourse || 0),
+              0
+            ) ?? 0
+          ).toFixed(2);
+
+      return {
+        id: item.id,
+        filename: item.filename || '',
+        date: item.date,
+        nbDossiers: nb,
+        total,
+        rembourse
+      };
+    });
     res.json(data);
-  } catch {
-    res.status(500).json({ error: 'Erreur lecture bordereaux.json' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Erreur lecture bordereaux' });
   }
 });
 

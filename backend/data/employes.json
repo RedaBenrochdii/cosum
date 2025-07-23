@@ -99,5 +99,45 @@
         "dateNaissance": "2009-04-05"
       }
     ]
+  },
+  {
+    "Matricule_Employe": "TEST",
+    "Nom_Employe": "TEST",
+    "Prenom_Employe": "TEST",
+    "DateNaissance": "2025-02-22",
+    "Famille": [
+      {
+        "nom": "TEST",
+        "prenom": "TTT",
+        "type": "enfant",
+        "dateNaissance": "2005-05-05"
+      }
+    ]
+  },
+  {
+    "Matricule_Employe": "TYT",
+    "Nom_Employe": "TYTY",
+    "Prenom_Employe": "TYTY",
+    "DateNaissance": "2000-07-06",
+    "Famille": [
+      {
+        "nom": "Y",
+        "prenom": "Y",
+        "type": "conjoint",
+        "dateNaissance": "2004-02-12"
+      },
+      {
+        "nom": "TOTI",
+        "prenom": "TOTO",
+        "type": "enfant",
+        "dateNaissance": "2009-06-06"
+      }
+    ]
+  },
+  {
+    "Matricule_Employe": "nizar",
+    "Nom_Employe": "nizar ",
+    "Prenom_Employe": "nizar",
+    "Famille": []
   }
 ]
