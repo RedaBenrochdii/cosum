@@ -43,7 +43,7 @@ app.use('/bordereaux', express.static(bordereauxDir));
 // 🔐 Login
 app.post('/api/login', (req, res) => {
   const { username, password } = req.body;
-  if (username === 'admin' && password === 'reda@2025') {
+  if (username === 'cosumar' && password === 'cosumar@2025') {
     return res.status(200).json({ success: true, token: 'token123' });
   }
   res.status(401).json({ success: false, message: "Identifiants invalides" });
